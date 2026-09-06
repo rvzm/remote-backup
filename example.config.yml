@@ -1,0 +1,137 @@
+# buzm — example configuration
+#
+# Copy this file to config.yml and edit it:
+#     cp example.config.yml config.yml
+#
+# config.yml is yours and is gitignored; example.config.yml is the committed
+# template and must never contain real paths or credentials.
+#
+# buzm looks for config.yml in this order, first hit wins:
+#     1. --config PATH
+#     2. $BUZM_CONFIG
+#     3. ./config.yml            (current directory)
+#     4. config.yml beside buzm.py
+#     5. ~/.buzm/config.yml
+
+
+# run: global options.
+#
+#  - type: what the destination is. This also decides which engine moves the
+#    bytes \u2014 there is no separate engine setting.
+#        scw    -> rclone   (a remote you set up with `rclone config`)
+#        local  -> fs       (coreutils, for removable storage)
+#        sftp   -> rclone
+#        ftp    -> rclone
+#        rsync  -> rsync    (daemon, or over ssh)
+#
+#  - destination: where backups go. scw and local take a bare remote or path;
+#    the network types take a URL, whose scheme must match the type.
+#        scw     scw:data/laptop
+#        local   /run/media/user/BACKUP
+#        sftp    sftp://user@host:22/home/user/backup
+#        ftp     ftp://user@host/backup        (ftps:// forces TLS)
+#        rsync   rsync://host/module/path      (rsync daemon)
+#                ssh://user@host/path          (rsync over ssh)
+#    Overridable at runtime with $BUZM_REMOTE. Do not put a password in the URL;
+#    use auth: below, so it stays out of logs and process arguments.
+#
+#  - auth: how to authenticate. Options:
+#        public                        no authentication (default)
+#        sshkey                        use the ssh-agent
+#        sshkey:~/.ssh/id_ed25519      use this private key
+#        password                      read the password from $BUZM_PASSWORD
+#        password:@~/.buzm/ftp.pass    read it from the first line of that file
+#        password:hunter2              the password itself
+#    A literal password, or a password file others can read, gets a warning.
+#    Bear in mind that a secret written into a directory buzm backs up is sent
+#    to the remote in cleartext along with everything else \u2014 an env var or a
+#    chmod 600 file outside the backup set avoids that.
+#    rsync over ssh:// cannot use a password; use a key or the agent.
+#
+#  - tls: FTP only. True by default, so ftp means FTPS. Setting it false sends
+#    credentials and file contents in cleartext, and warns on every run.
+#
+#  - archive: create a dated .7z of each library and send that instead of
+#    syncing files individually. Requires 7z. (default: false)
+#
+#  - listmaxfiles: skip and log any directory holding more files than this,
+#    rather than uploading it. Omit for no cap.
+run:
+  destination: scw:data/laptop
+  type: scw
+  auth: public
+  archive: false
+  listmaxfiles: 15
+
+# Other destinations, for reference:
+#
+# A removable drive. buzm refuses to run if the path is on the system volume \u2014
+# an unmounted drive leaves its mount point behind as an ordinary directory, and
+# writing there would fill the system disk instead of the drive.
+#   run:
+#     destination: /run/media/user/BACKUP
+#     type: local
+#
+# SFTP with a key. The host must already be in ~/.ssh/known_hosts (override with
+# $BUZM_KNOWN_HOSTS); an unknown host key is refused rather than trusted.
+#   run:
+#     destination: sftp://backup@nas.local:22/srv/backup
+#     type: sftp
+#     auth: sshkey:~/.ssh/id_ed25519
+#
+# An rsync daemon, password from the environment.
+#   run:
+#     destination: rsync://backup@nas.local:873/backups/laptop
+#     type: rsync
+#     auth: password
+#
+# rsync over ssh, using the agent.
+#   run:
+#     destination: ssh://backup@nas.local/srv/backup
+#     type: rsync
+#     auth: sshkey
+
+
+# libraries: individual backup libraries.
+#  - top level: library name, e.g. 'videos:'. Becomes a folder at the destination.
+#  - mode: copy or move the library contents. (can be set per-dir too)
+#  - gitignore: back up only files Git tracks, skipping ignored content.
+#    (can be set per-dir too)
+#  - dirs: the directories in the library.
+#
+# Each dirs entry takes a path, and optionally its own mode and gitignore which
+# override the library defaults. A ':CustomName' suffix on the path renames the
+# folder at the destination; without one it keeps the source's own name.
+#
+# Files land at:  <destination>/<library>/<dir name>/
+
+libraries:
+  videos:
+    mode: copy
+    dirs:
+     - path: /home/user/Videos/OBS/:OBS
+     - path: /home/user/Videos/Projects/Edits/:Edits
+     - path: /home/user/Videos/Projects/Finished/:Finished
+     - path: /home/user/Videos/Projects/cuttingroomfloor/
+       mode: move
+  photos:
+    mode: copy
+    dirs:
+      - path: /home/user/Pictures/
+  dev:
+    mode: copy
+    gitignore: true
+    dirs:
+      - path: /home/user/Projects/
+      - path: /home/user/dev/
+      - path: /home/user/devbak/
+        mode: move
+        gitignore: false
+  documents:
+    mode: copy
+    dirs:
+      - path: /home/user/Documents/
+  downloads:
+    mode: copy
+    dirs:
+      - path: /home/user/Downloads/

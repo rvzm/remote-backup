@@ -1,0 +1,15 @@
+# Real, local configuration — holds your own paths and, later, credentials.
+# Start from example.config.yml instead.
+config.yml
+
+# Runtime output
+logs/
+*.7z
+
+# Python
+__pycache__/
+*.py[cod]
+
+# AI Agents
+AGENTS.md
+CLAUDE.md
