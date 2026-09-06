@@ -6,15 +6,15 @@
 ![buzm](https://img.shields.io/badge/buzm-0.1-green)
 ![Python](https://img.shields.io/badge/python-^3.10-green)
 ![rsync](https://img.shields.io/badge/rsync-^3.5.0-green)
-![rclone](https://img.shields.io/badge/rclone-^1.75.0-green)\
+![rclone](https://img.shields.io/badge/rclone-^1.75.0-green)
 
 ![python-deps](https://img.shields.io/badge/python--dep-rich_pyyaml-blue)
 ![system-deps](https://img.shields.io/badge/system--dep-find_cp_rm_mkdir_xargs_findmnt_7z-blue)
 ![system-remote](https://img.shields.io/badge/system--remote-git_rclone_rsync_ftp_sftp_ssh-blue)
 
 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/rvzm/remote-backup)
 ![GitHub License](https://img.shields.io/github/license/rvzm/remote-backup)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/rvzm/remote-backup)
 ![GitHub Issues](https://img.shields.io/github/issues/rvzm/remote-backup)
 
 
