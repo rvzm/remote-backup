@@ -291,6 +291,9 @@ appended per day and never rotated automatically.
 
 ## History
 
+![GitHub file size in bytes](https://img.shields.io/github/size/rvzm/remote-backup/legacy%2Fscw-backup.py)
+![legacy depreciated](https://img.shields.io/badge/depreciated-09.05.2026-red)
+
 buzm began as a personal Bash script for pushing directories to a locally-mounted SCW bulk
 store, then was rewritten in Python. The original [`legacy\scw-backup.py`](legacy\scw-backup.py) as a
 milestone. SCW is now just one `type:` among several.
